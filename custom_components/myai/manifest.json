@@ -1,0 +1,13 @@
+{
+  "domain": "myai",
+  "name": "myAI",
+  "version": "1.1.0",
+  "documentation": "https://github.com/maxbie/ha-myai",
+  "issue_tracker": "https://github.com/maxbie/ha-myai/issues",
+  "codeowners": ["@maxbie"],
+  "config_flow": true,
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "dependencies": []
+}
