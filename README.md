@@ -22,6 +22,12 @@ including **structured output**.
 
 - Home Assistant **2025.8** or newer (AI Task entity + structured output)
 - An OpenAI-compatible API endpoint and API key
+- An active **myAI Pro** subscription with API access — see the
+  [myAI subscriptions FAQ](https://myai.swisscom.ch/faq#myai-subscriptions)
+
+> **Note:** API access is part of the paid myAI Pro plan. Without an active
+> subscription the connection test during setup will fail with an
+> authentication error.
 
 ## Installation
 
