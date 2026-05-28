@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "myAI configuration",
-        "description": "Configure a myAI instance. You can add multiple instances with different models and API keys.",
+        "description": "Configure a myAI instance. You can add multiple instances with different models and API keys. Requires an active myAI Pro subscription with API access.",
         "data": {
           "name": "Name (e.g. Qwen 3.5)",
           "api_key": "API key",
