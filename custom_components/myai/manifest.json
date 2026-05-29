@@ -1,7 +1,7 @@
 {
   "domain": "myai",
   "name": "myAI",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "documentation": "https://github.com/maxbie/ha-myai",
   "issue_tracker": "https://github.com/maxbie/ha-myai/issues",
   "codeowners": ["@maxbie"],
