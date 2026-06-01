@@ -6,8 +6,11 @@
         "description": "Configura un'istanza myAI. Puoi aggiungere più istanze con modelli e chiavi API diversi. Richiede un abbonamento myAI Pro con accesso API attivo.",
         "data": {
           "name": "Nome",
-          "api_key": "Chiave API ([genera chiave](https://myai.swisscom.ch/settings/api))",
+          "api_key": "Chiave API",
           "base_url": "URL di base"
+        },
+        "data_description": {
+          "api_key": "[Genera chiave](https://myai.swisscom.ch/settings/api)"
         }
       },
       "model": {

@@ -6,8 +6,11 @@
         "description": "Configure a myAI instance. You can add multiple instances with different models and API keys. Requires an active myAI Pro subscription with API access.",
         "data": {
           "name": "Name",
-          "api_key": "API key ([generate key](https://myai.swisscom.ch/settings/api))",
+          "api_key": "API key",
           "base_url": "Base URL"
+        },
+        "data_description": {
+          "api_key": "[Generate key](https://myai.swisscom.ch/settings/api)"
         }
       },
       "model": {

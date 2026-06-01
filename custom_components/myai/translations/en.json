@@ -8,6 +8,9 @@
           "name": "Name",
           "api_key": "API key",
           "base_url": "Base URL"
+        },
+        "data_description": {
+          "api_key": "[Generate key](https://myai.swisscom.ch/settings/api)"
         }
       },
       "model": {

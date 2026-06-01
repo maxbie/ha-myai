@@ -6,8 +6,11 @@
         "description": "Configurer une instance myAI. Vous pouvez ajouter plusieurs instances avec différents modèles et clés API. Nécessite un abonnement myAI Pro avec accès API actif.",
         "data": {
           "name": "Nom",
-          "api_key": "Clé API ([générer une clé](https://myai.swisscom.ch/settings/api))",
+          "api_key": "Clé API",
           "base_url": "URL de base"
+        },
+        "data_description": {
+          "api_key": "[Générer une clé](https://myai.swisscom.ch/settings/api)"
         }
       },
       "model": {

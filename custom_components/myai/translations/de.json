@@ -6,8 +6,11 @@
         "description": "Konfiguriere eine myAI-Instanz. Du kannst mehrere Instanzen mit verschiedenen Modellen und API-Schlüsseln hinzufügen. Erfordert ein aktives myAI Pro Abo mit API-Zugang.",
         "data": {
           "name": "Name",
-          "api_key": "API-Schlüssel ([Schlüssel generieren](https://myai.swisscom.ch/settings/api))",
+          "api_key": "API-Schlüssel",
           "base_url": "Basis-URL"
+        },
+        "data_description": {
+          "api_key": "[Schlüssel generieren](https://myai.swisscom.ch/settings/api)"
         }
       },
       "model": {
