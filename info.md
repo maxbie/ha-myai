@@ -1,3 +1,11 @@
+## About
+
+This integration is purpose-built for **Swisscom myAI**. It connects exclusively to the
+myAI platform at `code.myai.swisscom.ch` and is not a generic integration for other AI
+services.
+
+---
+
 ## What's new in 2.1.0
 
 **AI Task entity** — myAI now provides an `ai_task.generate_data` entity for one-shot
@@ -20,8 +28,8 @@ history limit, and more without deleting and re-adding the integration.
 
 **Reconfigure** — Update base URL and name from the integration card menu.
 
-**Model dropdown** — During setup, if the endpoint supports `/models`, you get a
-dropdown instead of typing the model ID manually.
+**Model dropdown** — During setup, available models are fetched from your myAI account
+and shown in a dropdown.
 
 **Custom system prompt** — Set a persona or instructions per instance
 (e.g. "Always respond in German").

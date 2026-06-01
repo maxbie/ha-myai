@@ -7,14 +7,16 @@
 
 # myAI – Home Assistant Custom Integration
 
-A custom integration that connects **Swisscom myAI** to Home Assistant.
+A custom integration for **Swisscom myAI** in Home Assistant.
 It provides a **Conversation agent** (for Voice Preview and automations), an **AI Task entity**
 (for one-shot generation with structured output), and **token usage sensors** — all configured
 through the UI.
 
+This integration is purpose-built for the **myAI platform by Swisscom**.
+
 ## Features
 
-- Connects directly to the Swisscom myAI API (`code.myai.swisscom.ch`)
+- Built specifically for the **Swisscom myAI** platform
 - **Conversation agent** — use as a voice assistant with full device control
 - **AI Task entity** — one-shot `ai_task.generate_data` with structured output (JSON schema)
 - **Token usage sensors** — track prompt, completion, and total tokens (long-term statistics)
@@ -33,10 +35,10 @@ through the UI.
 ## Requirements
 
 - Home Assistant **2025.8** or newer
-- An active **myAI Pro** subscription with API access — see the
+- A **Swisscom myAI** account with API access — see the
   [myAI subscriptions FAQ](https://myai.swisscom.ch/faq#myai-subscriptions)
 
-> **Note:** API access is part of the paid myAI Pro plan. Without an active
+> **Note:** API access requires a myAI Pro plan from Swisscom. Without an active
 > subscription the connection test during setup will fail with an
 > authentication error.
 
@@ -57,9 +59,9 @@ through the UI.
 ## Configuration
 
 1. Go to **Settings → Devices & Services → Add Integration → myAI**.
-2. Enter a name and your myAI API key.
-   - The base URL defaults to `https://code.myai.swisscom.ch/v1` — you typically don't need to change it.
-   - The integration fetches available models from the myAI API and presents them in a dropdown.
+2. Enter a name and your Swisscom myAI API key.
+   - The base URL is pre-configured to `https://code.myai.swisscom.ch/v1` — no changes needed.
+   - The integration fetches available models from your myAI account and presents them in a dropdown.
    - The default model is `qwen3.5-397b-a17b`.
 
 ### Multiple models
@@ -72,8 +74,8 @@ After setup, click **Configure** on the integration card to adjust:
 
 | Option        | Description                                              | Default              |
 | ---------------| ----------------------------------------------------------| ----------------------|
-| API key       | Update the myAI API key                                  | *(from setup)*       |
-| Model ID      | Switch to a different myAI model                         | `qwen3.5-397b-a17b` |
+| API key       | Update your Swisscom myAI API key                        | *(from setup)*       |
+| Model ID      | Switch to a different model available on myAI            | `qwen3.5-397b-a17b` |
 | System prompt | Custom instructions prepended to every conversation      | *(built-in default)* |
 | Max tokens    | Limit response length (0 = no limit)                     | `0`                  |
 | Temperature   | Creativity (0.0 – 2.0)                                   | `1.0`                |

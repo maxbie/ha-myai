@@ -45,6 +45,41 @@ if _SELECTOR_SERIALIZER is None:
     )
 
 
+def _adjust_schema(schema: dict[str, Any]) -> None:
+    """Adjust the output schema to be compatible with OpenAI's strict mode.
+
+    OpenAI structured outputs require:
+    - "strict": true on object schemas
+    - "additionalProperties": false on object schemas
+    - All properties listed in "required"
+    - Non-required properties get their type wrapped as [type, "null"]
+    """
+    if schema.get("type") == "object":
+        schema.setdefault("strict", True)
+        schema.setdefault("additionalProperties", False)
+        if "properties" not in schema:
+            return
+        if "required" not in schema:
+            schema["required"] = []
+        for prop, prop_info in schema["properties"].items():
+            _adjust_schema(prop_info)
+            if prop not in schema["required"]:
+                prop_info["type"] = [prop_info["type"], "null"]
+                schema["required"].append(prop)
+    elif schema.get("type") == "array":
+        if "items" not in schema:
+            return
+        _adjust_schema(schema["items"])
+
+
+def _slugify_schema_name(name: str) -> str:
+    """Convert a task name into a valid JSON schema name (alphanumeric + underscores)."""
+    import re
+    slug = re.sub(r"[^a-zA-Z0-9_]", "_", name.strip())
+    slug = re.sub(r"_+", "_", slug).strip("_")
+    return slug[:64] or "structured_output"
+
+
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: ConfigEntry,
@@ -55,7 +90,7 @@ async def async_setup_entry(
 
 
 class MyAITaskEntity(AITaskEntity):
-    """myAI AI Task entity backed by an OpenAI-compatible API."""
+    """myAI AI Task entity."""
 
     _attr_has_entity_name = False
     _attr_supported_features = AITaskEntityFeature.GENERATE_DATA
@@ -87,13 +122,18 @@ class MyAITaskEntity(AITaskEntity):
         # Structured output: convert the HA selector schema into a JSON schema
         # and ask the model to respond strictly in that shape.
         if task.structure is not None:
+            schema = convert(
+                task.structure, custom_serializer=_SELECTOR_SERIALIZER
+            )
+            _adjust_schema(schema)
+            # Use the task name as the schema name, falling back to a default.
+            schema_name = _slugify_schema_name(task.name) if task.name else "structured_output"
             payload["response_format"] = {
                 "type": "json_schema",
                 "json_schema": {
-                    "name": "structured_output",
-                    "schema": convert(
-                        task.structure, custom_serializer=_SELECTOR_SERIALIZER
-                    ),
+                    "name": schema_name,
+                    "strict": True,
+                    "schema": schema,
                 },
             }
 

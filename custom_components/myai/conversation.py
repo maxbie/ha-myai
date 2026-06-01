@@ -49,7 +49,7 @@ async def async_setup_entry(
 
 
 class MyAIConversationEntity(conversation.ConversationEntity):
-    """myAI conversation agent backed by an OpenAI-compatible API."""
+    """myAI conversation agent."""
 
     _attr_has_entity_name = True
     _attr_name = "Conversation"
@@ -203,7 +203,7 @@ class MyAIConversationEntity(conversation.ConversationEntity):
     def _build_messages(
         self, chat_log: conversation.ChatLog
     ) -> list[dict[str, Any]]:
-        """Convert the HA chat log into OpenAI-compatible messages.
+        """Convert the HA chat log into myAI-compatible messages.
 
         Applies the max_history limit to avoid exceeding token budgets.
         """
@@ -273,7 +273,7 @@ class MyAIConversationEntity(conversation.ConversationEntity):
     def _build_tools_spec(
         self, chat_log: conversation.ChatLog
     ) -> list[dict[str, Any]] | None:
-        """Build the OpenAI-compatible tools array from the LLM API tools."""
+        """Build the tools array from the LLM API tools."""
         if not chat_log.llm_api or not chat_log.llm_api.tools:
             return None
 

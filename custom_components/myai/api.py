@@ -40,7 +40,7 @@ async def async_call_api(
     entry: ConfigEntry,
     payload: dict[str, Any],
 ) -> dict[str, Any]:
-    """Call the OpenAI-compatible API with retry logic and token tracking.
+    """Call the myAI API with retry logic and token tracking.
 
     Returns the parsed JSON response dict.
     Raises aiohttp.ClientError or asyncio.TimeoutError on failure.
