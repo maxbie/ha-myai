@@ -3,9 +3,25 @@
     "step": {
       "user": {
         "title": "myAI configuration",
-        "description": "Configure a myAI instance. You can add multiple instances with different models and API keys. Requires an active myAI Pro subscription with API access.",
+        "description": "Configure a myAI instance. You can add multiple instances with different models and API keys. Requires an active [myAI Pro subscription with API access](https://myai.swisscom.ch/settings/api).",
         "data": {
-          "name": "Name (e.g. Qwen 3.5)",
+          "name": "Name",
+          "api_key": "API key",
+          "base_url": "Base URL"
+        }
+      },
+      "model": {
+        "title": "Select model",
+        "description": "Choose a model to use with this instance.",
+        "data": {
+          "model": "Model"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure myAI",
+        "description": "Update the connection settings for this myAI instance.",
+        "data": {
+          "name": "Name",
           "api_key": "API key",
           "base_url": "Base URL",
           "model": "Model ID"
@@ -19,6 +35,23 @@
     },
     "abort": {
       "already_configured": "This instance is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "myAI options",
+        "description": "Adjust settings for this myAI instance.",
+        "data": {
+          "api_key": "API key",
+          "model": "Model ID",
+          "system_prompt": "Custom system prompt",
+          "max_tokens": "Max tokens (0 = no limit)",
+          "temperature": "Temperature (0.0 – 2.0)",
+          "max_history": "Max conversation history turns",
+          "ha_control": "Enable Home Assistant device control"
+        }
+      }
     }
   }
 }

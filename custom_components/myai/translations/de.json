@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "myAI Konfiguration",
+        "description": "Konfiguriere eine myAI-Instanz. Du kannst mehrere Instanzen mit verschiedenen Modellen und API-Schlüsseln hinzufügen. Erfordert ein aktives myAI Pro Abo mit API-Zugang.",
+        "data": {
+          "name": "Name",
+          "api_key": "API-Schlüssel ([Schlüssel generieren](https://myai.swisscom.ch/settings/api))",
+          "base_url": "Basis-URL"
+        }
+      },
+      "model": {
+        "title": "Modell auswählen",
+        "description": "Wähle ein Modell für diese Instanz.",
+        "data": {
+          "model": "Modell"
+        }
+      },
+      "reconfigure": {
+        "title": "myAI neu konfigurieren",
+        "description": "Verbindungseinstellungen für diese myAI-Instanz aktualisieren.",
+        "data": {
+          "name": "Name",
+          "api_key": "API-Schlüssel",
+          "base_url": "Basis-URL",
+          "model": "Modell-ID"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung fehlgeschlagen – URL oder API-Schlüssel prüfen",
+      "invalid_auth": "Ungültiger API-Schlüssel",
+      "unknown": "Unerwarteter Fehler"
+    },
+    "abort": {
+      "already_configured": "Diese Instanz ist bereits konfiguriert"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "myAI Optionen",
+        "description": "Einstellungen für diese myAI-Instanz anpassen.",
+        "data": {
+          "api_key": "API-Schlüssel",
+          "model": "Modell-ID",
+          "system_prompt": "Benutzerdefinierter System-Prompt",
+          "max_tokens": "Max. Tokens (0 = kein Limit)",
+          "temperature": "Temperatur (0.0 – 2.0)",
+          "max_history": "Max. Gesprächsverlauf (Anzahl Runden)",
+          "ha_control": "Home Assistant Gerätesteuerung aktivieren"
+        }
+      }
+    }
+  }
+}

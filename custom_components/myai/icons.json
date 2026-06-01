@@ -1,0 +1,9 @@
+{
+  "entity": {
+    "sensor": {
+      "token_usage": {
+        "default": "mdi:counter"
+      }
+    }
+  }
+}

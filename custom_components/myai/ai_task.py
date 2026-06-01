@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 from typing import Any
 
 import aiohttp
@@ -14,15 +15,22 @@ from homeassistant.components.ai_task import (
     GenDataTask,
     GenDataTaskResult,
 )
+from homeassistant.components.conversation import ChatLog
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_API_KEY, CONF_NAME
+from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import llm
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONF_BASE_URL, CONF_MODEL, DOMAIN
+from .api import async_call_api
+from .const import (
+    CONF_MODEL,
+    DOMAIN,
+)
+
+_LOGGER = logging.getLogger(__name__)
 
 # Home Assistant exposes a serializer that turns selector-based schemas into
 # JSON schema. The exact name has varied across versions, so resolve it
@@ -30,8 +38,11 @@ from .const import CONF_BASE_URL, CONF_MODEL, DOMAIN
 _SELECTOR_SERIALIZER = getattr(llm, "selector_serializer", None) or getattr(
     llm, "_selector_serializer", None
 )
-
-TIMEOUT = aiohttp.ClientTimeout(total=120, connect=10, sock_read=110)
+if _SELECTOR_SERIALIZER is None:
+    _LOGGER.warning(
+        "Could not resolve selector_serializer from homeassistant.helpers.llm; "
+        "structured output schema conversion may not serialize selectors correctly"
+    )
 
 
 async def async_setup_entry(
@@ -56,29 +67,20 @@ class MyAITaskEntity(AITaskEntity):
         self._attr_unique_id = config_entry.entry_id
 
     @property
-    def device_info(self) -> dict[str, Any]:
+    def device_info(self) -> DeviceInfo:
         """Group the entity under a device in the UI."""
-        return {
-            "identifiers": {(DOMAIN, self._entry.entry_id)},
-            "name": self._attr_name,
-            "manufacturer": "myAI",
-            "model": self._entry.data[CONF_MODEL],
-        }
+        return DeviceInfo(
+            identifiers={(DOMAIN, self._entry.entry_id)},
+            name=self._attr_name,
+            manufacturer="myAI",
+            model=self._entry.data[CONF_MODEL],
+        )
 
     async def _async_generate_data(
         self, task: GenDataTask, chat_log
     ) -> GenDataTaskResult:
         """Call the API and return the generated data."""
-        data = self._entry.data
-        session = async_get_clientsession(self.hass)
-
-        url = data[CONF_BASE_URL].rstrip("/") + "/chat/completions"
-        headers = {
-            "Authorization": f"Bearer {data[CONF_API_KEY]}",
-            "Content-Type": "application/json",
-        }
         payload: dict[str, Any] = {
-            "model": data[CONF_MODEL],
             "messages": [{"role": "user", "content": task.instructions}],
         }
 
@@ -96,19 +98,17 @@ class MyAITaskEntity(AITaskEntity):
             }
 
         try:
-            async with session.post(
-                url, headers=headers, json=payload, timeout=TIMEOUT
-            ) as resp:
-                if resp.status == 401:
-                    raise HomeAssistantError("myAI rejected the API key (HTTP 401)")
-                if resp.status >= 400:
-                    body = await resp.text()
-                    raise HomeAssistantError(
-                        f"myAI API error (HTTP {resp.status}): {body[:200]}"
-                    )
-                result = await resp.json()
+            result = await async_call_api(self.hass, self._entry, payload)
         except (aiohttp.ClientError, asyncio.TimeoutError) as err:
             raise HomeAssistantError(f"Error talking to the myAI API: {err}") from err
+
+        status = result.get("_http_status", 200)
+        if status == 401:
+            raise HomeAssistantError("myAI rejected the API key (HTTP 401)")
+        if status >= 400:
+            raise HomeAssistantError(
+                f"myAI API error (HTTP {status}): {str(result)[:200]}"
+            )
 
         try:
             text = result["choices"][0]["message"]["content"]

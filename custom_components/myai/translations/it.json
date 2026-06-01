@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurazione myAI",
+        "description": "Configura un'istanza myAI. Puoi aggiungere più istanze con modelli e chiavi API diversi. Richiede un abbonamento myAI Pro con accesso API attivo.",
+        "data": {
+          "name": "Nome",
+          "api_key": "Chiave API ([genera chiave](https://myai.swisscom.ch/settings/api))",
+          "base_url": "URL di base"
+        }
+      },
+      "model": {
+        "title": "Seleziona modello",
+        "description": "Scegli un modello per questa istanza.",
+        "data": {
+          "model": "Modello"
+        }
+      },
+      "reconfigure": {
+        "title": "Riconfigura myAI",
+        "description": "Aggiorna le impostazioni di connessione per questa istanza myAI.",
+        "data": {
+          "name": "Nome",
+          "api_key": "Chiave API",
+          "base_url": "URL di base",
+          "model": "ID modello"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Connessione fallita – controlla l'URL o la chiave API",
+      "invalid_auth": "Chiave API non valida",
+      "unknown": "Errore imprevisto"
+    },
+    "abort": {
+      "already_configured": "Questa istanza è già configurata"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni myAI",
+        "description": "Modifica le impostazioni di questa istanza myAI.",
+        "data": {
+          "api_key": "Chiave API",
+          "model": "ID modello",
+          "system_prompt": "Prompt di sistema personalizzato",
+          "max_tokens": "Token max. (0 = nessun limite)",
+          "temperature": "Temperatura (0.0 – 2.0)",
+          "max_history": "Cronologia conversazione max. (turni)",
+          "ha_control": "Attiva il controllo dispositivi Home Assistant"
+        }
+      }
+    }
+  }
+}
