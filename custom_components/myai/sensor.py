@@ -14,6 +14,13 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONF_MODEL, DOMAIN, SIGNAL_USAGE_UPDATED
 
+# Per-sensor icons: input (prompt), output (completion), and the sum (total).
+ICONS = {
+    "prompt_tokens": "mdi:debug-step-into",
+    "completion_tokens": "mdi:debug-step-out",
+    "total_tokens": "mdi:sigma",
+}
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -46,6 +53,7 @@ class MyAITokenSensor(SensorEntity):
         self._token_key = token_key
         self._attr_name = name_suffix
         self._attr_unique_id = f"{config_entry.entry_id}_{token_key}"
+        self._attr_icon = ICONS.get(token_key)
 
     @property
     def device_info(self) -> DeviceInfo:
