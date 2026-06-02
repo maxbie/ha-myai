@@ -62,7 +62,7 @@ This integration is purpose-built for the **myAI platform by Swisscom**.
 2. Enter a name and your Swisscom myAI API key.
    - The base URL is pre-configured to `https://code.myai.swisscom.ch/v1` — no changes needed.
    - The integration fetches available models from your myAI account and presents them in a dropdown.
-   - The default model is `qwen3.5-397b-a17b`.
+   - The default model is `qwen3.5-397b-a17b`
 
 ### Multiple models
 
