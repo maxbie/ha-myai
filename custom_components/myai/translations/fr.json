@@ -1,0 +1,64 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuration myAI",
+        "description": "Configurer une instance myAI. Vous pouvez ajouter plusieurs instances avec différents modèles et clés API. Nécessite un abonnement myAI Pro avec accès API actif.",
+        "data": {
+          "name": "Nom",
+          "api_key": "Clé API",
+          "base_url": "URL de base"
+        },
+        "data_description": {
+          "api_key": "[Générer une clé](https://myai.swisscom.ch/settings/api)"
+        }
+      },
+      "model": {
+        "title": "Sélectionner le modèle",
+        "description": "Choisissez un modèle pour cette instance.",
+        "data": {
+          "model": "Modèle",
+          "ha_control": "Activer le contrôle des appareils Home Assistant"
+        },
+        "data_description": {
+          "ha_control": "Permet à l'IA de contrôler vos appareils (lumières, interrupteurs, etc.)"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurer myAI",
+        "description": "Mettre à jour les paramètres de connexion de cette instance myAI.",
+        "data": {
+          "name": "Nom",
+          "api_key": "Clé API",
+          "base_url": "URL de base",
+          "model": "ID du modèle"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Connexion échouée – vérifiez l'URL ou la clé API",
+      "invalid_auth": "Clé API invalide",
+      "unknown": "Erreur inattendue"
+    },
+    "abort": {
+      "already_configured": "Cette instance est déjà configurée"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options myAI",
+        "description": "Ajuster les paramètres de cette instance myAI.",
+        "data": {
+          "api_key": "Clé API",
+          "model": "ID du modèle",
+          "system_prompt": "Prompt système personnalisé",
+          "max_tokens": "Tokens max. (0 = sans limite)",
+          "temperature": "Température (0.0 – 2.0)",
+          "max_history": "Historique de conversation max. (tours)",
+          "ha_control": "Activer le contrôle des appareils Home Assistant"
+        }
+      }
+    }
+  }
+}

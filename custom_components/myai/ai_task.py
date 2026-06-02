@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 from typing import Any
 
 import aiohttp
@@ -14,15 +15,22 @@ from homeassistant.components.ai_task import (
     GenDataTask,
     GenDataTaskResult,
 )
+from homeassistant.components.conversation import ChatLog
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_API_KEY, CONF_NAME
+from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import llm
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONF_BASE_URL, CONF_MODEL, DOMAIN
+from .api import async_call_api
+from .const import (
+    CONF_MODEL,
+    DOMAIN,
+)
+
+_LOGGER = logging.getLogger(__name__)
 
 # Home Assistant exposes a serializer that turns selector-based schemas into
 # JSON schema. The exact name has varied across versions, so resolve it
@@ -30,8 +38,46 @@ from .const import CONF_BASE_URL, CONF_MODEL, DOMAIN
 _SELECTOR_SERIALIZER = getattr(llm, "selector_serializer", None) or getattr(
     llm, "_selector_serializer", None
 )
+if _SELECTOR_SERIALIZER is None:
+    _LOGGER.warning(
+        "Could not resolve selector_serializer from homeassistant.helpers.llm; "
+        "structured output schema conversion may not serialize selectors correctly"
+    )
 
-TIMEOUT = aiohttp.ClientTimeout(total=120, connect=10, sock_read=110)
+
+def _adjust_schema(schema: dict[str, Any]) -> None:
+    """Adjust the output schema to be compatible with OpenAI's strict mode.
+
+    OpenAI structured outputs require:
+    - "strict": true on object schemas
+    - "additionalProperties": false on object schemas
+    - All properties listed in "required"
+    - Non-required properties get their type wrapped as [type, "null"]
+    """
+    if schema.get("type") == "object":
+        schema.setdefault("strict", True)
+        schema.setdefault("additionalProperties", False)
+        if "properties" not in schema:
+            return
+        if "required" not in schema:
+            schema["required"] = []
+        for prop, prop_info in schema["properties"].items():
+            _adjust_schema(prop_info)
+            if prop not in schema["required"]:
+                prop_info["type"] = [prop_info["type"], "null"]
+                schema["required"].append(prop)
+    elif schema.get("type") == "array":
+        if "items" not in schema:
+            return
+        _adjust_schema(schema["items"])
+
+
+def _slugify_schema_name(name: str) -> str:
+    """Convert a task name into a valid JSON schema name (alphanumeric + underscores)."""
+    import re
+    slug = re.sub(r"[^a-zA-Z0-9_]", "_", name.strip())
+    slug = re.sub(r"_+", "_", slug).strip("_")
+    return slug[:64] or "structured_output"
 
 
 async def async_setup_entry(
@@ -44,7 +90,7 @@ async def async_setup_entry(
 
 
 class MyAITaskEntity(AITaskEntity):
-    """myAI AI Task entity backed by an OpenAI-compatible API."""
+    """myAI AI Task entity."""
 
     _attr_has_entity_name = False
     _attr_supported_features = AITaskEntityFeature.GENERATE_DATA
@@ -56,59 +102,53 @@ class MyAITaskEntity(AITaskEntity):
         self._attr_unique_id = config_entry.entry_id
 
     @property
-    def device_info(self) -> dict[str, Any]:
+    def device_info(self) -> DeviceInfo:
         """Group the entity under a device in the UI."""
-        return {
-            "identifiers": {(DOMAIN, self._entry.entry_id)},
-            "name": self._attr_name,
-            "manufacturer": "myAI",
-            "model": self._entry.data[CONF_MODEL],
-        }
+        return DeviceInfo(
+            identifiers={(DOMAIN, self._entry.entry_id)},
+            name=self._attr_name,
+            manufacturer="myAI",
+            model=self._entry.data[CONF_MODEL],
+        )
 
     async def _async_generate_data(
         self, task: GenDataTask, chat_log
     ) -> GenDataTaskResult:
         """Call the API and return the generated data."""
-        data = self._entry.data
-        session = async_get_clientsession(self.hass)
-
-        url = data[CONF_BASE_URL].rstrip("/") + "/chat/completions"
-        headers = {
-            "Authorization": f"Bearer {data[CONF_API_KEY]}",
-            "Content-Type": "application/json",
-        }
         payload: dict[str, Any] = {
-            "model": data[CONF_MODEL],
             "messages": [{"role": "user", "content": task.instructions}],
         }
 
         # Structured output: convert the HA selector schema into a JSON schema
         # and ask the model to respond strictly in that shape.
         if task.structure is not None:
+            schema = convert(
+                task.structure, custom_serializer=_SELECTOR_SERIALIZER
+            )
+            _adjust_schema(schema)
+            # Use the task name as the schema name, falling back to a default.
+            schema_name = _slugify_schema_name(task.name) if task.name else "structured_output"
             payload["response_format"] = {
                 "type": "json_schema",
                 "json_schema": {
-                    "name": "structured_output",
-                    "schema": convert(
-                        task.structure, custom_serializer=_SELECTOR_SERIALIZER
-                    ),
+                    "name": schema_name,
+                    "strict": True,
+                    "schema": schema,
                 },
             }
 
         try:
-            async with session.post(
-                url, headers=headers, json=payload, timeout=TIMEOUT
-            ) as resp:
-                if resp.status == 401:
-                    raise HomeAssistantError("myAI rejected the API key (HTTP 401)")
-                if resp.status >= 400:
-                    body = await resp.text()
-                    raise HomeAssistantError(
-                        f"myAI API error (HTTP {resp.status}): {body[:200]}"
-                    )
-                result = await resp.json()
+            result = await async_call_api(self.hass, self._entry, payload)
         except (aiohttp.ClientError, asyncio.TimeoutError) as err:
             raise HomeAssistantError(f"Error talking to the myAI API: {err}") from err
+
+        status = result.get("_http_status", 200)
+        if status == 401:
+            raise HomeAssistantError("myAI rejected the API key (HTTP 401)")
+        if status >= 400:
+            raise HomeAssistantError(
+                f"myAI API error (HTTP {status}): {str(result)[:200]}"
+            )
 
         try:
             text = result["choices"][0]["message"]["content"]
