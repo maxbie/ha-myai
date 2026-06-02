@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "myAI configuration",
-        "description": "Configure a myAI instance. You can add multiple instances with different models and API keys. Requires an active [myAI Pro subscription with API access](https://myai.swisscom.ch/settings/api).",
+        "description": "Configure a myAI instance. You can add multiple instances with different models and API keys. Requires an active [myAI Pro subscription](https://myai.swisscom.ch/faq#myai-subscriptions).",
         "data": {
           "name": "Name",
           "api_key": "API key",

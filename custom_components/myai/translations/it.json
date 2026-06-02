@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Configurazione myAI",
-        "description": "Configura un'istanza myAI. Puoi aggiungere più istanze con modelli e chiavi API diversi. Richiede un abbonamento myAI Pro con accesso API attivo.",
+        "description": "Configura un'istanza myAI. Puoi aggiungere più istanze con modelli e chiavi API diversi. Richiede un [abbonamento myAI Pro](https://myai.swisscom.ch/faq#myai-subscriptions) attivo.",
         "data": {
           "name": "Nome",
           "api_key": "Chiave API",
