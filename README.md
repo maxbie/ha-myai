@@ -59,10 +59,16 @@ This integration is purpose-built for the **myAI platform by Swisscom**.
 ## Configuration
 
 1. Go to **Settings → Devices & Services → Add Integration → myAI**.
-2. Enter a name and your Swisscom myAI API key.
-   - The base URL is pre-configured to `https://code.myai.swisscom.ch/v1` — no changes needed.
-   - The integration fetches available models from your myAI account and presents them in a dropdown.
-   - The default model is `qwen3.5-397b-a17b`
+2. Enter a **Name** for this instance (e.g. `myAI Qwen 3.5`).
+3. Enter your **API key** — generate one in your
+   [myAI API settings](https://myai.swisscom.ch/settings/api).
+4. Leave the **Base URL** as is — it's pre-configured to
+   `https://code.myai.swisscom.ch/v1`.
+5. Submit. The integration fetches the available models from your myAI account.
+6. Choose your **model** from the dropdown (defaults to `qwen3.5-397b-a17b`).
+   If the list can't be retrieved, type the **Model ID** manually instead.
+7. Submit again. The connection is tested, and on success the instance is created.
+   If the key or URL is wrong, the error appears at this point.
 
 ### Multiple models
 
