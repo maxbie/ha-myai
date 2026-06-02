@@ -17,7 +17,11 @@
         "title": "Sélectionner le modèle",
         "description": "Choisissez un modèle pour cette instance.",
         "data": {
-          "model": "Modèle"
+          "model": "Modèle",
+          "ha_control": "Activer le contrôle des appareils Home Assistant"
+        },
+        "data_description": {
+          "ha_control": "Permet à l'IA de contrôler vos appareils (lumières, interrupteurs, etc.)"
         }
       },
       "reconfigure": {

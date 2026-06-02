@@ -22,7 +22,7 @@ If something is outside your capabilities, say so very short."""
 DEFAULT_MAX_TOKENS = 0  # 0 means no limit (let the API decide)
 DEFAULT_TEMPERATURE = 1.0
 DEFAULT_MAX_HISTORY = 20  # max conversation turns to keep
-DEFAULT_HA_CONTROL = True  # enable Home Assistant device control by default
+DEFAULT_HA_CONTROL = False  # Home Assistant device control is opt-in
 
 # Retry settings
 MAX_RETRIES = 1

@@ -4,10 +4,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_API_KEY, Platform
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
-from .const import CONF_MODEL
+from .const import DOMAIN  # noqa: F401
 
 PLATFORMS = [Platform.SENSOR, Platform.CONVERSATION, Platform.AI_TASK]
 
@@ -39,15 +39,4 @@ async def async_unload_entry(hass: HomeAssistant, entry: MyAIConfigEntry) -> boo
 
 async def _async_update_listener(hass: HomeAssistant, entry: MyAIConfigEntry) -> None:
     """Handle options update — reload the entry to pick up new settings."""
-    # If the API key was changed in options, update entry.data as well.
-    new_api_key = entry.options.get(CONF_API_KEY)
-    new_model = entry.options.get(CONF_MODEL)
-    if new_api_key or new_model:
-        new_data = dict(entry.data)
-        if new_api_key:
-            new_data[CONF_API_KEY] = new_api_key
-        if new_model:
-            new_data[CONF_MODEL] = new_model
-        hass.config_entries.async_update_entry(entry, data=new_data)
-
     await hass.config_entries.async_reload(entry.entry_id)

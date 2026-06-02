@@ -6,7 +6,7 @@ services.
 
 ---
 
-## What's new in 2.1.0
+## What's new in 2.0.0
 
 **AI Task entity** — myAI now provides an `ai_task.generate_data` entity for one-shot
 prompts in automations and scripts. Supports structured output via JSON schema
@@ -14,10 +14,6 @@ prompts in automations and scripts. Supports structured output via JSON schema
 
 **Shared API helper** — Centralized API call logic with retry, timeout handling, and
 token tracking shared between the conversation agent and AI task platforms.
-
----
-
-## What's new in 2.0.0
 
 **Conversation agent** — myAI registers as a conversation agent. Use it as your
 voice assistant in Voice Preview with full Home Assistant device control (turn on lights,

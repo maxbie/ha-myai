@@ -155,6 +155,7 @@ class MyAIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 return self.async_create_entry(
                     title=merged[CONF_NAME],
                     data=merged,
+                    options={CONF_HA_CONTROL: user_input.get(CONF_HA_CONTROL, DEFAULT_HA_CONTROL)},
                 )
 
         # Build schema: dropdown if models were fetched, text input otherwise.
@@ -162,11 +163,17 @@ class MyAIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             models = self._available_models
             default = DEFAULT_MODEL if DEFAULT_MODEL in models else models[0]
             schema = vol.Schema(
-                {vol.Required(CONF_MODEL, default=default): vol.In(models)}
+                {
+                    vol.Required(CONF_MODEL, default=default): vol.In(models),
+                    vol.Optional(CONF_HA_CONTROL, default=DEFAULT_HA_CONTROL): bool,
+                }
             )
         else:
             schema = vol.Schema(
-                {vol.Required(CONF_MODEL, default=DEFAULT_MODEL): str}
+                {
+                    vol.Required(CONF_MODEL, default=DEFAULT_MODEL): str,
+                    vol.Optional(CONF_HA_CONTROL, default=DEFAULT_HA_CONTROL): bool,
+                }
             )
 
         return self.async_show_form(
@@ -193,7 +200,7 @@ class MyAIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             else:
                 unique_id = f"{user_input[CONF_BASE_URL]}::{user_input[CONF_MODEL]}"
                 await self.async_set_unique_id(unique_id)
-                self._abort_if_unique_id_configured()
+                self._abort_if_unique_id_mismatch()
                 return self.async_update_reload_and_abort(
                     entry,
                     title=user_input[CONF_NAME],
@@ -229,7 +236,16 @@ class MyAIOptionsFlow(config_entries.OptionsFlow):
     async def async_step_init(self, user_input=None):
         """Manage the options."""
         if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
+            # Separate credentials from options: move API key to data, keep the rest as options.
+            new_options = dict(user_input)
+            new_api_key = new_options.pop(CONF_API_KEY, None)
+            if new_api_key:
+                new_data = dict(self.config_entry.data)
+                new_data[CONF_API_KEY] = new_api_key
+                self.hass.config_entries.async_update_entry(
+                    self.config_entry, data=new_data
+                )
+            return self.async_create_entry(title="", data=new_options)
 
         options = self.config_entry.options
         data = self.config_entry.data

@@ -166,16 +166,12 @@ automatically on restart. No manual migration needed.
 
 ## Changelog
 
-### 2.1.0
+### 2.0.0
 
 - **AI Task entity** — new `ai_task.generate_data` platform with structured output
   (JSON schema via `response_format`).
-- Shared API helper with centralized retry logic and token tracking.
-- Internal refactoring for better code reuse between conversation and AI task platforms.
-
-### 2.0.0
-
 - Conversation agent with multi-turn tool calling and HA device control.
+- Shared API helper with centralized retry logic and token tracking.
 - Options flow, reconfigure flow, model dropdown.
 - Token usage sensors with long-term statistics.
 - Custom system prompt, temperature, max tokens, history limit.

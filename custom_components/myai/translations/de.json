@@ -17,7 +17,11 @@
         "title": "Modell auswählen",
         "description": "Wähle ein Modell für diese Instanz.",
         "data": {
-          "model": "Modell"
+          "model": "Modell",
+          "ha_control": "Home Assistant Gerätesteuerung aktivieren"
+        },
+        "data_description": {
+          "ha_control": "Erlaubt der KI, deine Geräte zu steuern (Lichter, Schalter usw.)"
         }
       },
       "reconfigure": {

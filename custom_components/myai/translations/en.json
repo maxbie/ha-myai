@@ -17,7 +17,11 @@
         "title": "Select model",
         "description": "Choose a model to use with this instance.",
         "data": {
-          "model": "Model"
+          "model": "Model",
+          "ha_control": "Enable Home Assistant device control"
+        },
+        "data_description": {
+          "ha_control": "Allows the AI to control your devices (lights, switches, etc.)"
         }
       },
       "reconfigure": {
