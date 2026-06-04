@@ -14,10 +14,11 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONF_MODEL, DOMAIN, SIGNAL_USAGE_UPDATED
 
-# Per-sensor icons: input (prompt), output (completion), and the sum (total).
+# Icons from the user's perspective: the prompt is uploaded (sent out), the
+# completion is downloaded (comes back), total is the sum.
 ICONS = {
-    "prompt_tokens": "mdi:debug-step-into",
-    "completion_tokens": "mdi:debug-step-out",
+    "prompt_tokens": "mdi:upload-outline",
+    "completion_tokens": "mdi:download-outline",
     "total_tokens": "mdi:sigma",
 }
 
