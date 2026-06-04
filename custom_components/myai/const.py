@@ -12,7 +12,8 @@ CONF_HA_CONTROL = "ha_control"
 
 DEFAULT_BASE_URL = "https://code.myai.swisscom.ch/v1"
 DEFAULT_MODEL = "qwen3.5-397b-a17b"
-DEFAULT_SYSTEM_PROMPT = """You are a conversation assistant for Home Assistant.
+DEFAULT_SYSTEM_PROMPT = """Your name is myAI.
+You are a conversation assistant for Home Assistant.
 Answer questions about the world truthfully.
 Answer in plain text. Keep it short, simple and to the point.
 Be concise, warm, and conversational.
