@@ -38,6 +38,13 @@ from .const import (
     DOMAIN,
 )
 
+# URLs are kept out of the translation strings (hassfest requirement) and
+# injected at runtime via description placeholders instead.
+URL_PLACEHOLDERS = {
+    "api_url": "https://myai.swisscom.ch/settings/api",
+    "faq_url": "https://myai.swisscom.ch/faq#myai-subscriptions",
+}
+
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_NAME, default="myAI"): str,
@@ -131,6 +138,7 @@ class MyAIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=STEP_USER_DATA_SCHEMA,
             errors=errors,
+            description_placeholders=URL_PLACEHOLDERS,
         )
 
     async def async_step_model(self, user_input=None):
