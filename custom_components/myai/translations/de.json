@@ -10,6 +10,7 @@
           "base_url": "Basis-URL"
         },
         "data_description": {
+          "name": "Anzeigename (frei wählbar)",
           "api_key": "[Schlüssel generieren]({api_url})"
         }
       },

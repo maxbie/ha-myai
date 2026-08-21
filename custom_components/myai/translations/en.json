@@ -10,6 +10,7 @@
           "base_url": "Base URL"
         },
         "data_description": {
+          "name": "Display name (freely customizable)",
           "api_key": "[Generate key]({api_url})"
         }
       },

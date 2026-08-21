@@ -10,6 +10,7 @@
           "base_url": "URL de base"
         },
         "data_description": {
+          "name": "Nom d'affichage (personnalisable)",
           "api_key": "[Générer une clé]({api_url})"
         }
       },
