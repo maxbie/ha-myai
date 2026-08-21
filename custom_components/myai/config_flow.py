@@ -54,8 +54,26 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 )
 
 
+async def _validate_credentials(hass, base_url: str, api_key: str) -> str | None:
+    """Validate API credentials by calling /models. Return None on success, else an error key."""
+    session = async_get_clientsession(hass)
+    url = base_url.rstrip("/") + "/models"
+    headers = {"Authorization": f"Bearer {api_key}"}
+    try:
+        async with session.get(
+            url, headers=headers, timeout=aiohttp.ClientTimeout(total=10)
+        ) as resp:
+            if resp.status == 401:
+                return "invalid_auth"
+            if resp.status >= 400:
+                return "cannot_connect"
+            return None
+    except (aiohttp.ClientError, asyncio.TimeoutError):
+        return "cannot_connect"
+
+
 async def _test_connection(hass, base_url: str, api_key: str, model: str) -> str | None:
-    """Test the API connection. Return None on success, else an error key."""
+    """Test the API connection with a specific model. Return None on success, else an error key."""
     session = async_get_clientsession(hass)
     url = base_url.rstrip("/") + "/chat/completions"
     headers = {
@@ -120,19 +138,26 @@ class MyAIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return MyAIOptionsFlow()
 
     async def async_step_user(self, user_input=None):
-        """Handle the initial step — credentials and base URL."""
+        """Handle the initial step — credentials and base URL with validation."""
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            # Try to fetch models from the API.
-            models = await _fetch_models(
+            # Validate credentials before proceeding.
+            error = await _validate_credentials(
                 self.hass, user_input[CONF_BASE_URL], user_input[CONF_API_KEY]
             )
+            if error:
+                errors["base"] = error
+            else:
+                # Credentials valid – try to fetch models from the API.
+                models = await _fetch_models(
+                    self.hass, user_input[CONF_BASE_URL], user_input[CONF_API_KEY]
+                )
 
-            # Store input and proceed to model selection.
-            self._user_input = user_input
-            self._available_models = models
-            return await self.async_step_model()
+                # Store input and proceed to model selection.
+                self._user_input = user_input
+                self._available_models = models
+                return await self.async_step_model()
 
         return self.async_show_form(
             step_id="user",
@@ -258,6 +283,21 @@ class MyAIOptionsFlow(config_entries.OptionsFlow):
         options = self.config_entry.options
         data = self.config_entry.data
 
+        # Fetch available models from the API.
+        current_model = options.get(CONF_MODEL, data.get(CONF_MODEL, DEFAULT_MODEL))
+        available_models = await _fetch_models(
+            self.hass, data.get(CONF_BASE_URL, DEFAULT_BASE_URL), data.get(CONF_API_KEY, "")
+        )
+
+        # Build model selector: dropdown if models available, text input otherwise.
+        if available_models:
+            # Ensure current model is in the list (in case API no longer returns it).
+            if current_model not in available_models:
+                available_models = [current_model] + available_models
+            model_selector = vol.In(available_models)
+        else:
+            model_selector = str
+
         schema = vol.Schema(
             {
                 vol.Optional(
@@ -266,8 +306,8 @@ class MyAIOptionsFlow(config_entries.OptionsFlow):
                 ): str,
                 vol.Optional(
                     CONF_MODEL,
-                    default=options.get(CONF_MODEL, data.get(CONF_MODEL, DEFAULT_MODEL)),
-                ): str,
+                    default=current_model,
+                ): model_selector,
                 vol.Optional(
                     CONF_SYSTEM_PROMPT,
                     default=options.get(CONF_SYSTEM_PROMPT, DEFAULT_SYSTEM_PROMPT),
