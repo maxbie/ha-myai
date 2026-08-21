@@ -10,7 +10,7 @@ services.
 
 **AI Task entity** — myAI now provides an `ai_task.generate_data` entity for one-shot
 prompts in automations and scripts. Supports structured output via JSON schema
-(`response_format`) and vision/image attachments.
+(`response_format`).
 
 **Shared API helper** — Centralized API call logic with retry, timeout handling, and
 token tracking shared between the conversation agent and AI task platforms.
@@ -34,8 +34,6 @@ and shown in a dropdown.
 completion tokens. Works with long-term statistics.
 
 **Home Assistant control toggle** — Disable device control for a pure chat agent.
-
-**Vision / image attachments** — Forward images to multimodal models via base64 encoding.
 
 **Retry with backoff** — Automatic retry on transient 5xx errors or timeouts.
 

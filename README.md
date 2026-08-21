@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="custom_components/myai/brand/dark_logo.png">
-    <img src="custom_components/myai/brand/logo.png" alt="myAI" width="320">
+    <source media="(prefers-color-scheme: dark)" srcset="brand/dark_logo.png">
+    <img src="brand/logo.png" alt="myAI" width="320">
   </picture>
 </p>
 
@@ -64,11 +64,10 @@ This integration is purpose-built for the **myAI platform by Swisscom**.
    [myAI API settings](https://myai.swisscom.ch/settings/api).
 4. Leave the **Base URL** as is — it's pre-configured to
    `https://code.myai.swisscom.ch/v1`.
-5. Submit. The integration fetches the available models from your myAI account.
+5. Submit. If the key or URL is wrong, the error appears here and you can correct it.
 6. Choose your **model** from the dropdown (defaults to `qwen3.5-397b-a17b`).
    If the list can't be retrieved, type the **Model ID** manually instead.
-7. Submit again. The connection is tested, and on success the instance is created.
-   If the key or URL is wrong, the error appears at this point.
+7. Submit again. The instance is created.
 
 ### Multiple models
 
