@@ -23,7 +23,7 @@ This integration is purpose-built for the **myAI platform by Swisscom**.
 - Multiple instances (different models / API keys)
 - **Options flow** — change model, API key, system prompt, temperature, and more without re-adding
 - **Reconfigure** — update name, API key, base URL, and model from the integration page
-- **Model dropdown** — auto-fetches available models from the myAI API during setup
+- **Model selection** — auto-fetches available models from the myAI API during setup
 - **Custom system prompt** — set a persona or instructions per instance
 - **Max tokens & temperature** — tune verbosity and creativity
 - **Conversation history limit** — cap turns to stay within token budgets (default: 20)
@@ -65,7 +65,7 @@ This integration is purpose-built for the **myAI platform by Swisscom**.
 4. Leave the **Base URL** as is — it's pre-configured to
    `https://code.myai.swisscom.ch/v1`.
 5. Submit. If the key or URL is wrong, the error appears here and you can correct it.
-6. Choose your **model** from the dropdown (defaults to `qwen3.5-397b-a17b`).
+6. Choose your **model** from the list (defaults to `qwen3.5-397b-a17b`).
    If the list can't be retrieved, type the **Model ID** manually instead.
 7. Submit again. The instance is created.
 
@@ -172,8 +172,8 @@ Until then, send your prompt as text.
 ## Diagnostics
 
 Go to the integration page → three-dot menu → **Download diagnostics** to get a JSON
-export of your configuration (API key redacted) and current token usage. Attach this
-to bug reports.
+export of your configuration (API key redacted) and current token usage — attach this
+to bug reports
 
 ## Upgrading from 1.x
 
@@ -183,17 +183,28 @@ automatically on restart. No manual migration needed.
 
 ## Changelog
 
+### 2.0.8
+
+- API key validation now happens in step 1 (before model selection) — invalid keys
+  show an error immediately instead of letting users get stuck.
+- Model selection in Options flow now fetches available models from API.
+- Brand assets restored for HACS validation.
+
 ### 2.0.0
 
 - **AI Task entity** — new `ai_task.generate_data` platform with structured output
   (JSON schema via `response_format`).
 - Conversation agent with multi-turn tool calling and optional HA device control.
 - Shared API helper with centralized retry logic and token tracking.
-- Options flow, reconfigure flow, model dropdown.
+- Options flow, reconfigure flow, model selection.
 - Token usage sensors with long-term statistics.
 - Custom system prompt, temperature, max tokens, history limit.
 - Automatic retry on transient errors.
 - Diagnostics export.
+
+## Contributing
+
+Thanks to [@Bhafner2](https://github.com/Bhafner2) for contributions to this project.
 
 ## License
 
