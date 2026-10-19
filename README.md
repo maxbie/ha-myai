@@ -183,6 +183,12 @@ automatically on restart. No manual migration needed.
 
 ## Changelog
 
+### 2.0.10
+
+- Reconfigure now lets you change the model, API key, or base URL — model changes take effect immediately.
+- Multiple instances with the same model but different API keys are now allowed.
+- Added a confirmation message after a successful reconfigure (en, de, fr, it).
+
 ### 2.0.8
 
 - API key validation now happens in step 1 (before model selection) — invalid keys
