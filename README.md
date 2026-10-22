@@ -67,6 +67,7 @@ This integration is purpose-built for the **myAI platform by Swisscom**.
 5. Submit. If the key or URL is wrong, the error appears here and you can correct it.
 6. Choose your **model** from the list (defaults to `qwen3.5-397b-a17b`).
    If the list can't be retrieved, type the **Model ID** manually instead.
+   Optionally enable **Home Assistant device control** (off by default).
 7. Submit again. The instance is created.
 
 ### Multiple models
@@ -81,10 +82,10 @@ After setup, click **Configure** on the integration card to adjust:
 | ------------- | -------------------------------------------------------- | -------------------- |
 | API key       | Update your Swisscom myAI API key                        | *(from setup)*       |
 | Model ID      | Switch to a different model available on myAI            | `qwen3.5-397b-a17b`  |
-| System prompt | Custom instructions prepended to every conversation      | *(built-in default)* |
+| System prompt | Custom instructions for the conversation agent           | *(built-in default)* |
 | Max tokens    | Limit response length (0 = no limit)                     | `0`                  |
 | Temperature   | Creativity (0.0 – 2.0)                                   | `1.0`                |
-| Max history   | Conversation turns to keep in context                    | `20`                 |
+| Max history   | Conversation turns the agent keeps in context            | `20`                 |
 | HA control    | Enable device control via voice (tools/function calling) | `off`                |
 
 ### Reconfigure
@@ -151,9 +152,11 @@ The result is available as parsed data, e.g. `myai_response.data.summary`.
 
 Each instance exposes three sensors:
 
-- `sensor.myai_<name>_total_tokens`
-- `sensor.myai_<name>_prompt_tokens`
-- `sensor.myai_<name>_completion_tokens`
+- `sensor.<name>_total_tokens`
+- `sensor.<name>_prompt_tokens`
+- `sensor.<name>_completion_tokens`
+
+`<name>` is the instance name in lowercase with underscores, e.g. `myai_qwen_3_5`.
 
 These use the `TOTAL_INCREASING` state class, so they work with long-term statistics.
 Values reset on Home Assistant restart.
@@ -173,7 +176,7 @@ Until then, send your prompt as text.
 
 Go to the integration page → three-dot menu → **Download diagnostics** to get a JSON
 export of your configuration (API key redacted) and current token usage — attach this
-to bug reports
+to bug reports.
 
 ## Upgrading from 1.x
 
@@ -183,6 +186,12 @@ automatically on restart. No manual migration needed.
 
 ## Changelog
 
+### 2.0.11
+
+- Reconfigure now lets you change the model, API key, or base URL — model changes take effect immediately.
+- Multiple instances with the same model but different API keys are now allowed.
+- Added a confirmation message after a successful reconfigure (en, de, fr, it).
+
 ### 2.0.10
 
 - Fix intent recognition on newer Home Assistant versions by converting probatio
@@ -190,13 +199,6 @@ automatically on restart. No manual migration needed.
 - Apply the same schema compatibility fix to AI Task structured output.
 - Return and log API errors in Assist instead of losing the response.
 - Report empty model responses explicitly.
-
-
-### 2.0.10
-
-- Reconfigure now lets you change the model, API key, or base URL — model changes take effect immediately.
-- Multiple instances with the same model but different API keys are now allowed.
-- Added a confirmation message after a successful reconfigure (en, de, fr, it).
 
 ### 2.0.8
 
