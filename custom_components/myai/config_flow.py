@@ -182,9 +182,10 @@ class MyAIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if error:
                 errors["base"] = error
             else:
-                unique_id = f"{merged[CONF_BASE_URL]}::{merged[CONF_MODEL]}"
-                await self.async_set_unique_id(unique_id)
-                self._abort_if_unique_id_configured()
+                # No unique ID: model, API key and base URL can all change, so
+                # there is no stable natural identifier. Allowing multiple
+                # entries matches the documented behaviour (different model or
+                # API key) and keeps reconfigure unblocked.
                 return self.async_create_entry(
                     title=merged[CONF_NAME],
                     data=merged,
@@ -231,13 +232,16 @@ class MyAIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if error:
                 errors["base"] = error
             else:
-                unique_id = f"{user_input[CONF_BASE_URL]}::{user_input[CONF_MODEL]}"
-                await self.async_set_unique_id(unique_id)
-                self._abort_if_unique_id_mismatch()
+                # The entry is identified by its entry_id (from the context),
+                # so no unique ID is needed. This lets the user freely change
+                # the model, API key or base URL during reconfigure.
+                # The model is also stored in options (which take precedence at
+                # runtime), so update it there too or the change has no effect.
                 return self.async_update_reload_and_abort(
                     entry,
                     title=user_input[CONF_NAME],
                     data=user_input,
+                    options={**entry.options, CONF_MODEL: user_input[CONF_MODEL]},
                 )
 
         schema = vol.Schema(
