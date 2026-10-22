@@ -15,6 +15,9 @@ from homeassistant.helpers.selector import (
     NumberSelector,
     NumberSelectorConfig,
     NumberSelectorMode,
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
     TextSelector,
     TextSelectorConfig,
     TextSelectorType,
@@ -45,13 +48,41 @@ URL_PLACEHOLDERS = {
     "faq_url": "https://myai.swisscom.ch/faq#myai-subscriptions",
 }
 
+# API keys are shown as a masked password field instead of plain text.
+API_KEY_SELECTOR = TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD))
+
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_NAME, default="myAI"): str,
-        vol.Required(CONF_API_KEY): str,
+        vol.Required(CONF_API_KEY): API_KEY_SELECTOR,
         vol.Required(CONF_BASE_URL, default=DEFAULT_BASE_URL): str,
     }
 )
+
+
+def _model_selector(
+    models: list[str] | None,
+    current: str | None = None,
+    allow_custom: bool = False,
+) -> Any:
+    """Return a model dropdown, or a plain text field if no list is available.
+
+    The current model is always kept in the list, even if the API no longer
+    returns it. allow_custom lets the user type a model that is not listed.
+    """
+    if not models:
+        return str
+    options = list(models)
+    if current and current not in options:
+        options.insert(0, current)
+    return SelectSelector(
+        SelectSelectorConfig(
+            options=options,
+            mode=SelectSelectorMode.DROPDOWN,
+            custom_value=allow_custom,
+            sort=False,
+        )
+    )
 
 
 async def _validate_credentials(hass, base_url: str, api_key: str) -> str | None:
@@ -193,22 +224,16 @@ class MyAIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 )
 
         # Build schema: dropdown if models were fetched, text input otherwise.
-        if self._available_models:
-            models = self._available_models
-            default = DEFAULT_MODEL if DEFAULT_MODEL in models else models[0]
-            schema = vol.Schema(
-                {
-                    vol.Required(CONF_MODEL, default=default): vol.In(models),
-                    vol.Optional(CONF_HA_CONTROL, default=DEFAULT_HA_CONTROL): bool,
-                }
-            )
-        else:
-            schema = vol.Schema(
-                {
-                    vol.Required(CONF_MODEL, default=DEFAULT_MODEL): str,
-                    vol.Optional(CONF_HA_CONTROL, default=DEFAULT_HA_CONTROL): bool,
-                }
-            )
+        models = self._available_models
+        default = (
+            models[0] if models and DEFAULT_MODEL not in models else DEFAULT_MODEL
+        )
+        schema = vol.Schema(
+            {
+                vol.Required(CONF_MODEL, default=default): _model_selector(models),
+                vol.Optional(CONF_HA_CONTROL, default=DEFAULT_HA_CONTROL): bool,
+            }
+        )
 
         return self.async_show_form(
             step_id="model",
@@ -244,19 +269,32 @@ class MyAIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     options={**entry.options, CONF_MODEL: user_input[CONF_MODEL]},
                 )
 
+        # The model in use: options take precedence over data at runtime.
+        current_model = entry.options.get(
+            CONF_MODEL, entry.data.get(CONF_MODEL, DEFAULT_MODEL)
+        )
+        # Fetch models with the current credentials. Custom values stay
+        # allowed, because the user may switch to a key with other models;
+        # the connection test on submit validates the combination.
+        models = await _fetch_models(
+            self.hass,
+            entry.data.get(CONF_BASE_URL, DEFAULT_BASE_URL),
+            entry.data.get(CONF_API_KEY, ""),
+        )
+
         schema = vol.Schema(
             {
                 vol.Required(CONF_NAME, default=entry.data.get(CONF_NAME, "myAI")): str,
                 vol.Required(
                     CONF_API_KEY, default=entry.data.get(CONF_API_KEY, "")
-                ): str,
+                ): API_KEY_SELECTOR,
                 vol.Required(
                     CONF_BASE_URL,
                     default=entry.data.get(CONF_BASE_URL, DEFAULT_BASE_URL),
                 ): str,
-                vol.Required(
-                    CONF_MODEL, default=entry.data.get(CONF_MODEL, DEFAULT_MODEL)
-                ): str,
+                vol.Required(CONF_MODEL, default=current_model): _model_selector(
+                    models, current_model, allow_custom=True
+                ),
             }
         )
 
@@ -293,25 +331,16 @@ class MyAIOptionsFlow(config_entries.OptionsFlow):
             self.hass, data.get(CONF_BASE_URL, DEFAULT_BASE_URL), data.get(CONF_API_KEY, "")
         )
 
-        # Build model selector: dropdown if models available, text input otherwise.
-        if available_models:
-            # Ensure current model is in the list (in case API no longer returns it).
-            if current_model not in available_models:
-                available_models = [current_model] + available_models
-            model_selector = vol.In(available_models)
-        else:
-            model_selector = str
-
         schema = vol.Schema(
             {
                 vol.Optional(
                     CONF_API_KEY,
                     default=data.get(CONF_API_KEY, ""),
-                ): str,
+                ): API_KEY_SELECTOR,
                 vol.Optional(
                     CONF_MODEL,
                     default=current_model,
-                ): model_selector,
+                ): _model_selector(available_models, current_model),
                 vol.Optional(
                     CONF_SYSTEM_PROMPT,
                     default=options.get(CONF_SYSTEM_PROMPT, DEFAULT_SYSTEM_PROMPT),
