@@ -42,7 +42,8 @@
       "unknown": "Erreur inattendue"
     },
     "abort": {
-      "already_configured": "Cette instance est déjà configurée"
+      "already_configured": "Cette instance est déjà configurée",
+      "reconfigure_successful": "Reconfiguration réussie"
     }
   },
   "options": {

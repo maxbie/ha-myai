@@ -42,7 +42,8 @@
       "unknown": "Unexpected error"
     },
     "abort": {
-      "already_configured": "This instance is already configured"
+      "already_configured": "This instance is already configured",
+      "reconfigure_successful": "Re-configuration was successful"
     }
   },
   "options": {

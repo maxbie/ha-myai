@@ -42,7 +42,8 @@
       "unknown": "Unerwarteter Fehler"
     },
     "abort": {
-      "already_configured": "Diese Instanz ist bereits konfiguriert"
+      "already_configured": "Diese Instanz ist bereits konfiguriert",
+      "reconfigure_successful": "Neukonfiguration erfolgreich"
     }
   },
   "options": {

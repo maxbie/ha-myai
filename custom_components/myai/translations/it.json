@@ -42,7 +42,8 @@
       "unknown": "Errore imprevisto"
     },
     "abort": {
-      "already_configured": "Questa istanza è già configurata"
+      "already_configured": "Questa istanza è già configurata",
+      "reconfigure_successful": "Riconfigurazione completata"
     }
   },
   "options": {
