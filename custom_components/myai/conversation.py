@@ -7,7 +7,6 @@ import logging
 from typing import Any, Literal
 
 import aiohttp
-from voluptuous_openapi import convert
 
 from homeassistant.components import conversation
 from homeassistant.config_entries import ConfigEntry
@@ -28,6 +27,7 @@ from .const import (
     DEFAULT_SYSTEM_PROMPT,
     DOMAIN,
 )
+from .schema import convert_schema
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -283,7 +283,7 @@ class MyAIConversationEntity(conversation.ConversationEntity):
             if tool.description:
                 func_spec["description"] = tool.description
             if tool.parameters.schema:
-                func_spec["parameters"] = convert(
+                func_spec["parameters"] = convert_schema(
                     tool.parameters,
                     custom_serializer=(
                         chat_log.llm_api.custom_serializer or _SELECTOR_SERIALIZER

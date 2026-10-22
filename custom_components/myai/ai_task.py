@@ -7,7 +7,6 @@ import logging
 from typing import Any
 
 import aiohttp
-from voluptuous_openapi import convert
 
 from homeassistant.components.ai_task import (
     AITaskEntity,
@@ -29,6 +28,7 @@ from .const import (
     CONF_MODEL,
     DOMAIN,
 )
+from .schema import convert_schema
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -122,7 +122,7 @@ class MyAITaskEntity(AITaskEntity):
         # Structured output: convert the HA selector schema into a JSON schema
         # and ask the model to respond strictly in that shape.
         if task.structure is not None:
-            schema = convert(
+            schema = convert_schema(
                 task.structure, custom_serializer=_SELECTOR_SERIALIZER
             )
             _adjust_schema(schema)
