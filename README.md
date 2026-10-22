@@ -23,7 +23,7 @@ This integration is purpose-built for the **myAI platform by Swisscom**.
 - Multiple instances (different models / API keys)
 - **Options flow** — change model, API key, system prompt, temperature, and more without re-adding
 - **Reconfigure** — update name, API key, base URL, and model from the integration page
-- **Model selection** — auto-fetches available models from the myAI API during setup
+- **Model selection** — dropdown with the models available on your myAI account (setup, options, and reconfigure)
 - **Custom system prompt** — set a persona or instructions per instance
 - **Max tokens & temperature** — tune verbosity and creativity
 - **Conversation history limit** — cap turns to stay within token budgets (default: 20)
@@ -185,6 +185,12 @@ Existing 1.x configurations will continue to work — the new platforms are adde
 automatically on restart. No manual migration needed.
 
 ## Changelog
+
+### 2.0.12
+
+- Reconfigure now offers the available models in a dropdown and preselects the model currently in use.
+- Model selection in setup and options uses a dropdown instead of a radio list.
+- API key fields are masked.
 
 ### 2.0.11
 
