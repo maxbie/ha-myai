@@ -118,6 +118,7 @@ class MyAIConversationEntity(conversation.ConversationEntity):
 
             # If the model didn't request any tool calls, we're done.
             if not result.tool_calls:
+                chat_log.async_add_assistant_content_without_tools(result)
                 break
 
             # Execute tool calls and feed results back into the chat log.
@@ -170,6 +171,8 @@ class MyAIConversationEntity(conversation.ConversationEntity):
 
         content_text = message.get("content") or ""
         tool_calls_raw = message.get("tool_calls")
+        if not content_text and not tool_calls_raw:
+            return self._error_content("myAI returned an empty response.")
 
         # Parse tool calls into HA ToolInput objects.
         tool_calls: list[llm.ToolInput] | None = None
@@ -193,10 +196,6 @@ class MyAIConversationEntity(conversation.ConversationEntity):
             content=content_text or None,
             tool_calls=tool_calls,
         )
-
-        # If there are no tool calls, add to chat log directly.
-        if not tool_calls:
-            chat_log.async_add_assistant_content_without_tools(assistant_content)
 
         return assistant_content
 
@@ -297,6 +296,7 @@ class MyAIConversationEntity(conversation.ConversationEntity):
 
     def _error_content(self, message: str) -> conversation.AssistantContent:
         """Create an AssistantContent with an error message (no tool calls)."""
+        _LOGGER.error("%s", message)
         return conversation.AssistantContent(
             agent_id=self.entity_id,
             content=message,

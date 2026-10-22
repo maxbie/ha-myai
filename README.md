@@ -185,6 +185,15 @@ automatically on restart. No manual migration needed.
 
 ### 2.0.10
 
+- Fix intent recognition on newer Home Assistant versions by converting probatio
+  tool schemas with the matching converter, while retaining legacy schema support.
+- Apply the same schema compatibility fix to AI Task structured output.
+- Return and log API errors in Assist instead of losing the response.
+- Report empty model responses explicitly.
+
+
+### 2.0.10
+
 - Reconfigure now lets you change the model, API key, or base URL — model changes take effect immediately.
 - Multiple instances with the same model but different API keys are now allowed.
 - Added a confirmation message after a successful reconfigure (en, de, fr, it).
