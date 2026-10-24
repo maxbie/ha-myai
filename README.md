@@ -46,10 +46,11 @@ This integration is purpose-built for the **myAI platform by Swisscom**.
 
 ### Via HACS (recommended)
 
+[![Open your Home Assistant instance and open this repository in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=maxbie&repository=ha-myai&category=integration)
+
 1. In Home Assistant, open **HACS**.
-2. Open the three-dot menu (top right) → **Custom repositories**.
-3. Add the repository URL `https://github.com/maxbie/ha-myai` and choose type **Integration**.
-4. Search for **myAI** in HACS, install it, then **restart Home Assistant**.
+2. Search for **myAI** and open it.
+3. Click **Download**, then **restart Home Assistant**.
 
 ### Manual
 
