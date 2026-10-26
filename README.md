@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="brand/dark_logo.png">
-    <img src="brand/logo.png" alt="myAI" width="320">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/maxbie/ha-myai/main/brand/dark_logo.png">
+    <img src="https://raw.githubusercontent.com/maxbie/ha-myai/main/brand/logo.png" alt="myAI" width="320">
   </picture>
 </p>
 
